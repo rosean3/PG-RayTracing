@@ -20,25 +20,26 @@ class Sphere(Object):
         self.radius = radius
         
 
-    # def intersect(self, ray):
-    #     oc = ray.origin - self.center
-    #     a = ray.direction.dot(ray.direction)
-    #     b = 2.0 * oc.dot(ray.direction)
-    #     c = oc.dot(oc) - self.radius * self.radius
-    #     discriminant = b * b - 4 * a * c
-    #     if discriminant > 0:
-    #         temp = (-b - math.sqrt(discriminant)) / (2.0 * a)
-    #         if temp < 0:
-    #             temp = (-b + math.sqrt(discriminant)) / (2.0 * a)
-    #         if temp > 0:
-    #             return temp
-    #     return None
+    def intersect(self, ray_origin, ray_direction):
+        I = self.center - ray_origin
+        Tca = numpy.dot(I, ray_direction)
+        D_sqrt = numpy.dot(I, I) - (Tca ** 2)
 
-    # def get_normal(self, point):
-    #     return (point - self.center).normalize()
+        if D_sqrt > (self.radius ** 2):
+            return None
+        else:
+            Thc = ((self.radius ** 2) - D_sqrt) ** 0.5
+            t0, t1 = Tca - Thc, Tca + Thc
 
-    # def get_material(self):
-    #     return self.material
+            if t0 > t1:
+                t0, t1 = t1, t0
+            elif t0 < 0:
+                if t1 < 0:
+                    return None
+                else:
+                    return t1
+
+            return t0
 
 class Plane(Object):
     def __init__(self, point, normal, color, kd, ks, ka, kr, kt, phong):
@@ -46,53 +47,48 @@ class Plane(Object):
         self.point = point
         self.normal = normal
 
-    # def intersect(self, ray):
-    #     denom = self.normal.dot(ray.direction)
-    #     if abs(denom) > 0.0001:
-    #         d = self.point - ray.origin
-    #         t = d.dot(self.normal) / denom
-    #         if t > 0:
-    #             return t
-    #     return None
-
-    # def get_normal(self, point):
-    #     return self.normal
-
-    # def get_material(self):
-    #     return self.material
+    def intersect(self, ray_origin, ray_direction):
+        denom = numpy.dot(self.normal, ray_direction)
+        if abs(denom) > 1e-6:
+            t = numpy.dot(self.normal, self.point - ray_origin)/ denom
+            if t < 0:
+                return None
+            if t >= 0:
+                return t
+        return None
 
 class Triangle(Object):
     def __init__(self, a, b, c, color, kd, ks, ka, kr, kt, phong):
         super().__init__(color, kd, ks, ka, kr, kt, phong)
         self.a = [int(x) for x in a]
-        self.b = [int(x) for x in a]
-        self.c = [int(x) for x in a]
+        self.b = [int(x) for x in b]
+        self.c = [int(x) for x in c]
 
     
     def getTriangle(self):
         return (self.a, self.b, self.c)
 
-    # def intersect(self, ray):
-    #     e1 = self.b - self.a
-    #     e2 = self.c - self.a
-    #     p = ray.direction.cross(e2)
-    #     a = e1.dot(p)
-    #     if abs(a) < 0.0001:
-    #         return None
-    #     f = 1.0 / a
-    #     s = ray.origin - self.a
-    #     u = f * s.dot(p)
-    #     if u < 0.0 or u > 1.0:
-    #         return None
-    #     q = s.cross(e1)
-    #     v = f * ray.direction.dot(q)
-    #     if v < 0.0 or u + v > 1.0:
-    #         return None
-    #     t = f * e2.dot(q)
-    #     if t > 0.0001:
-    #         return t
-    #     else:
-    #         return None
+    def intersect(self, ray_origin, ray_direction):
+        e1 = self.b - self.a
+        e2 = self.c - self.a
+        p = ray_direction.cross(e2)
+        a = e1.dot(p)
+        if abs(a) < 1e-6:
+            return None
+        f = 1/a
+        s = ray_origin - self.a
+        u = f * s.dot(p)
+        if u < 0 or u > 1:
+            return None
+        q = s.cross(e1)
+        v = f * ray_direction.dot(q)
+        if v < 0 or u + v > 1:
+            return None
+        t = f * e2.dot(q)
+        if t > 1e-6:
+            return t
+        else:
+            return None
 
     # def get_normal(self, point):
     #     return (self.b - self.a).cross(self.c - self.a).normalize()
@@ -120,17 +116,31 @@ class TriangleMesh(Object):
             triangles.append(triangle.getTriangle())
         return triangles
 
-    # def intersect(self, ray):
-    #     t = None
-    #     for face in self.faces:
-    #         triangle = Triangle(self.vertices[face[0]], self.vertices[face[1]], self.vertices[face[2]])
-    #         t = triangle.intersect(ray)
-    #         if t is not None:
-    #             return t
-    #     return None
+    def intersect(self, ray_origin, ray_direction):
+        for triangle in self.generateTriangles():
+            if triangle.intersect(ray_origin, ray_direction) != None:
+                return triangle.intersect(ray_origin, ray_direction)
 
     # def get_normal(self, point):
     #     return (self.b - self.a).cross(self.c - self.a).normalize()
 
     # def get_material(self):
     #     return self.material
+
+class Camera:
+    def __init__(self, height, width, d, up, focus, M):
+        self.height = height
+        self.width = width
+        self.d = d
+        self.up = up
+        self.focus = focus
+        self.M = M
+
+class Light:
+    def __init__(self, position, intensity):
+        self.position = position
+        self.intensity = intensity
+
+class AmbientLight:
+    def __init__(self, intensity):
+        self.intensity = intensity
