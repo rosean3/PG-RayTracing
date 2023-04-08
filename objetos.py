@@ -117,9 +117,16 @@ class TriangleMesh(Object):
         return triangles
 
     def intersect(self, ray_origin, ray_direction):
+        intersect = []
         for triangle in self.generateTriangles():
             if triangle.intersect(ray_origin, ray_direction) != None:
-                return triangle.intersect(ray_origin, ray_direction)
+                intersect.append(triangle.intersect(ray_origin, ray_direction))
+        
+        if len(intersect) == 0:
+            return None
+        
+        else:
+            return min(intersect), 
 
     # def get_normal(self, point):
     #     return (self.b - self.a).cross(self.c - self.a).normalize()
@@ -128,13 +135,14 @@ class TriangleMesh(Object):
     #     return self.material
 
 class Camera:
-    def __init__(self, height, width, d, up, focus, M):
+    def __init__(self, height, width, d, up, focus, M, field_of_view = 90):
         self.height = height
         self.width = width
         self.d = d
         self.up = up
         self.focus = focus
         self.M = M
+        self.field_of_view = field_of_view
 
 class Light:
     def __init__(self, position, intensity):
