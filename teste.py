@@ -47,7 +47,7 @@ if __name__ == "__main__":
                 objetos['camera'] = Camera(line[1], line[2], line[3], line[4:7], line[7:10], line[10:13])
 
         #pega os dados da luz
-        elif line[0] == 'i':
+        elif line[0] == 'l':
             if 'light' not in objetos:
                 objetos['light'] = []
 
