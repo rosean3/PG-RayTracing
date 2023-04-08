@@ -16,8 +16,8 @@ class Object:
 class Sphere(Object):
     def __init__(self, center, radius, color, kd, ks, ka, kr, kt, phong):
         super().__init__(color, kd, ks, ka, kr, kt, phong)
-        self.center = [int(x) for x in center]
-        self.radius = int(radius)
+        self.center = center
+        self.radius = radius
     
     def print_self(self):
         print("Center: ", self.center)
@@ -47,8 +47,8 @@ class Sphere(Object):
 class Plane(Object):
     def __init__(self, point, normal, color, kd, ks, ka, kr, kt, phong):
         super().__init__(color, kd, ks, ka, kr, kt, phong)
-        self.point = [int(x) for x in point]
-        self.normal = [int(x) for x in normal]
+        self.point = point
+        self.normal = normal
     
     def print_self(self):
         print("Point: ", self.point)
@@ -146,13 +146,13 @@ class TriangleMesh(Object):
     #     return self.material
 
 class Camera:
-    def __init__(self, height, width, d, up, focus, M, field_of_view = 90):
+    def __init__(self, height, width, d, up, focus, target, field_of_view = 90):
         self.height = height
         self.width = width
         self.d = d
         self.up = up
         self.focus = focus
-        self.M = M
+        self.target = target
         self.field_of_view = field_of_view
 
 class Light:

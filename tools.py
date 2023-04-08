@@ -22,8 +22,10 @@ def getInput(file_location):
                 print("Erro na leitura do arquivo\nVerifique se o numero de parametros da esfera esta correto na linha ", linha)
                 return
             else:
+                center = numpy.array([int(x) for x in line[1:4]])
+                radius = int(line[4])
                 objetos['sphere'].append(
-                    Sphere(line[1:4], line[4], line[5:8], line[8], line[9], line[10], line[11], line[12], line[13]))
+                    Sphere(center, radius, line[5:8], line[8], line[9], line[10], line[11], line[12], line[13]))
 
         #pega os dados do plano
         elif line[0] == 'p':
@@ -34,8 +36,10 @@ def getInput(file_location):
                 print("Erro na leitura do arquivo\nVerifique se o numero de parametros do plano esta correto na linha ", linha)
                 return
             else:
+                point = numpy.array([int(x) for x in line[1:4]])
+                normal = numpy.array([int(x) for x in line[4:7]])
                 objetos['plane'].append(
-                    Plane(line[1:4], line[4:7], line[7:10], line[10], line[11], line[12], line[13], line[14], line[15]))
+                    Plane(point, normal, line[7:10], line[10], line[11], line[12], line[13], line[14], line[15]))
 
         #pega os dados da camera
         elif line[0] == 'c':
@@ -43,10 +47,16 @@ def getInput(file_location):
                 print("Erro na leitura do arquivo\nVerifique se o numero de parametros da camera esta correto na linha ", linha)
                 return
             else:
-                objetos['camera'] = Camera(line[1], line[2], line[3], line[4:7], line[7:10], line[10:13])
+                height = int(line[1])
+                width = int(line[2])
+                d = int(line[3])
+                up = numpy.array([int(x) for x in line[4:7]])
+                focus = numpy.array([int(x) for x in line[7:10]])
+                target = numpy.array([int(x) for x in line[10:13]])
+                objetos['camera'] = Camera(height, width, d, up, focus, target)
 
         #pega os dados da luz
-        elif line[0] == 'i':
+        elif line[0] == 'l':
             if 'light' not in objetos:
                 objetos['light'] = []
 
@@ -55,7 +65,8 @@ def getInput(file_location):
                 return
 
             else:
-                objetos['light'].append(Light(line[1:4], line[4:7]))
+                position = numpy.array([int(x) for x in line[1:4]])
+                objetos['light'].append(Light(position, line[4:7]))
 
         #pega os dados do triangulo
         elif line[0] == 't':
