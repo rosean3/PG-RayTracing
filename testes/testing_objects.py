@@ -7,7 +7,7 @@ from operacoes import *
 from tools import *
 
 
-objects = getInput('/home/roseane/Documents/Faculdade/PG/Projeto/our_repo/teste.txt')
+objects, scene = getInput('/home/roseane/Documents/Faculdade/PG/Projeto/our_repo/teste.txt')
 
 # ! spheres
 print("SPHERES:")
@@ -38,11 +38,14 @@ print("\nTRIANGLES:")
 ray_origin3 = numpy.array((4,0.7,0.63533))
 ray_direction3 = normalize(numpy.array((-7.15,0.1,-0.64)))
 
-triangleMesh1 = objects['triangle'][0]
-triangles = triangleMesh1.generate_triangles()
+triangles = objects['all_triangles']
 triangle1 = triangles[0]
 triangle2 = triangles[1]
 triangle1.print_self()
 print(triangle1.intersect(ray_origin3, ray_direction3), '\n')
 triangle2.print_self()
 print(triangle2.intersect(ray_origin3, ray_direction3))
+
+print(objects)
+objects_list = [item for sublist in objects.values() for item in sublist]
+print ("\n flattened values: ", objects_list)

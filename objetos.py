@@ -146,14 +146,23 @@ class TriangleMesh(Object):
     #     return self.material
 
 class Camera:
-    def __init__(self, height, width, d, up, focus, target, field_of_view = 90):
-        self.height = height
-        self.width = width
-        self.d = d
+    def __init__(self, h_res, v_res, distance, up, focus, target, field_of_view = 90):
+        self.h_res = h_res
+        self.v_res = v_res
+        self.distance = distance
         self.up = up
         self.focus = focus
         self.target = target
         self.field_of_view = field_of_view
+
+    def print_self(self):
+        print("V_res: ", self.v_res)
+        print("H_res: ", self.h_res)
+        print("Distance: ", self.distance)
+        print("Up: ", self.up)
+        print("Focus: ", self.focus)
+        print("Target: ", self.target)
+        print("Field of View: ", self.field_of_view)
 
 class Light:
     def __init__(self, position, intensity):
