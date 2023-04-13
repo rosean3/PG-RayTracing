@@ -67,10 +67,6 @@ def cast(objects, lights, ray_origin, ray_direction, ambient_light):
     return color
 
 def trace_image(camera, ambient_light, lights, objects):
-    t = normalize([a - b for a, b in zip(camera.focus,camera.target)])
-    b = normalize(numpy.cross(camera.up, t))
-    v = numpy.cross(t, b)
-
     Q = numpy.zeros((camera.v_res, camera.h_res, 3))
     img = numpy.zeros((camera.v_res, camera.h_res, 3))
 
@@ -80,10 +76,10 @@ def trace_image(camera, ambient_light, lights, objects):
     gx = hx/2
     gy = hy/2
 
-    qx = (hx/(camera.h_res - 1)) * b
-    qy = (hy/(camera.v_res - 1)) * v
+    qx = (hx/(camera.h_res - 1)) * camera.b
+    qy = (hy/(camera.v_res - 1)) * camera.v
 
-    Q[0, 0] = camera.focus - camera.distance * t - gx*b + gy*v
+    Q[0, 0] = camera.focus - camera.distance * camera.t - gx*camera.b + gy*camera.v
 
     for i in range(camera.v_res):
         for j in range(camera.h_res):

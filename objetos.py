@@ -185,6 +185,9 @@ class Camera:
         self.focus = numpy.array([float(f) for f in focus])
         self.target = numpy.array([float(t) for t in target])
         self.field_of_view = float(field_of_view)
+        self.t = normalize([a - b for a, b in zip(self.focus,self.target)])
+        self.b = normalize(numpy.cross(self.up, self.t))
+        self.v = numpy.cross(self.t, self.b)
 
     def print_self(self):
         print("V_res: ", self.v_res)
@@ -194,16 +197,14 @@ class Camera:
         print("Focus: ", self.focus)
         print("Target: ", self.target)
         print("Field of View: ", self.field_of_view)
+        print("T: ", self.t)
+        print("B: ", self.b)
+        print("V: ", self.v)
 
     def rotate(self,x = 0,y = 0 ,z = 0, point = (0,0,0)):
         self.focus = rotate_x(x, point, self.focus)
         self.focus = rotate_y(y, point, self.focus)
         self.focus = rotate_z(z, point, self.focus)
-        self.target = rotate_x(x, point, self.target)
-        self.target = rotate_y(y, point, self.target)
-        self.target = rotate_z(z, point, self.target)
-
-
 
     def translation(self, vector):
         self.focus = [v1 + v2 for v1, v2 in zip(self.focus, vector)]
