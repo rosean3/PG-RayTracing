@@ -2,11 +2,25 @@
 import numpy
 
 def normalize(v):
+    '''
+    Normalize a vector
+    '''
     norm = numpy.linalg.norm(v)
     if norm == 0:
         return v
     return v / norm
 
+def normalize_lighting(color):
+    '''
+    Normalize the lighting
+    '''
+    return color/max(*color, 1)
+
+def reflect(l, n):
+    '''
+    Reflect a vector l in a normal n
+    '''
+    return 2 * n * numpy.dot(l, n) - l
 
 def rotate_x(angle,point1, point2):
     angle = numpy.radians(angle)

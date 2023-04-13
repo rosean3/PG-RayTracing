@@ -1,7 +1,7 @@
 from operacoes import *
 class Object:
     def __init__(self, color, kd, ks, ka, kr, kt, phong):
-        self.color = numpy.array([float(c) for c in color])
+        self.color = numpy.array([float(c) for c in color])/255
         self.kd = float(kd)
         self.ks = float(ks)
         self.ka = float(ka)
