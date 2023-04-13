@@ -37,8 +37,8 @@ def getInput(file_location):
                 print("Erro na leitura do arquivo\nVerifique se o numero de parametros do plano esta correto na linha ", linha)
                 return
             else:
-                point = numpy.array([int(x) for x in line[1:4]])
-                normal = numpy.array([int(x) for x in line[4:7]])
+                point = numpy.array([float(x) for x in line[1:4]])
+                normal = numpy.array([float(x) for x in line[4:7]])
                 objects['plane'].append(
                     Plane(point, normal, line[7:10], line[10], line[11], line[12], line[13], line[14], line[15]))
 
@@ -71,8 +71,10 @@ def getInput(file_location):
 
         #pega os dados do triangulo
         elif line[0] == 't':
-            if 'triangle_mesh' not in objects:
+            if 'all_triangles' not in objects:
                 objects['all_triangles'] = []
+            if 'triangle_mesh' not in objects:
+                objects['triangle_mesh'] = []
 
 
             n_faces, n_vertices = line[1:3]
@@ -104,6 +106,7 @@ def getInput(file_location):
 
             else:
                 auxMesh = TriangleMesh(faces, vertices, line[0:3], line[3], line[4], line[5], line[6], line[7],line[8])
+                objects['triangle_mesh'].append(auxMesh)
                 objects['all_triangles'] = numpy.append(objects['all_triangles'], auxMesh.generate_triangles())
 
         #pega os dados da luz ambiente
@@ -112,5 +115,5 @@ def getInput(file_location):
                 print("Erro na leitura do arquivo\nVerifique se o numero de parametros da luz ambiente esta correto na linha ", linha)
                 return
             else:
-                ambient_intensity = numpy.array([int(x) for x in line[1:4]])
+                ambient_intensity = numpy.array([float(x) for x in line[1:4]])
                 scene['ambient'] = AmbientLight(ambient_intensity)

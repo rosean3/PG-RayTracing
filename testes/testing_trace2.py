@@ -10,7 +10,7 @@ from tools import *
 from trace_image import *
 
 
-objects, scene = getInput(r'C:\Users\arthu\OneDrive\Documentos\GitHub\PG-RayTracing\teste.txt')
+objects, scene = getInput(r'/home/roseane/Documents/Faculdade/PG/Projeto/our_repo/teste.txt')
 
 camera = scene['camera']
 
@@ -24,7 +24,7 @@ for obj in objects:
 
 
 if "light" in scene:
-    image = trace_image(camera, ambient_light.intensity, scene['light'], objects_list)
+    image = trace_image(camera, ambient_light, scene['light'], objects_list)
 
     #objects_list[0].translation((40, 0, 0))
     #image2 = trace_image(camera, ambient_light.intensity, scene['light'], objects_list)
@@ -34,8 +34,6 @@ if "light" in scene:
 
 
 else:
-    image = trace_image(camera, ambient_light.intensity, None, objects_list)
+    image = trace_image(camera, ambient_light, None, objects_list)
 
 plt.imsave("TESTEEE.png", image )
-#plt.imsave("TESTEEE2.png", image2 )
-#plt.imsave("TESTEEE3.png", image3 )

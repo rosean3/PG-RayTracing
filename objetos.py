@@ -1,9 +1,10 @@
 import numpy
 from math import pi
 import math
+from operacoes import *
 class Object:
     def __init__(self, color, kd, ks, ka, kr, kt, phong):
-        self.color = [int(c) for c in color]
+        self.color = numpy.array([float(c) for c in color])
         self.kd = float(kd)
         self.ks = float(ks)
         self.ka = float(ka)
@@ -16,7 +17,7 @@ class Object:
 class Sphere(Object):
     def __init__(self, center, radius, color, kd, ks, ka, kr, kt, phong):
         super().__init__(color, kd, ks, ka, kr, kt, phong)
-        self.center = [float(c) for c in center]
+        self.center = numpy.array([float(c) for c in center])
         self.radius = float(radius)
     
     def print_self(self):
@@ -46,13 +47,16 @@ class Sphere(Object):
 
     def translation(self, vector):
         self.center = [v1 + v2 for v1, v2  in zip(self.center, vector)]
+    
+    def get_normal(self, p):
+        return normalize(p - self.center)
 
 
 class Plane(Object):
     def __init__(self, point, normal, color, kd, ks, ka, kr, kt, phong):
         super().__init__(color, kd, ks, ka, kr, kt, phong)
-        self.point = [float(p) for p in point]
-        self.normal = [float(n) for n in normal]
+        self.point = numpy.array([float(p) for p in point])
+        self.normal = numpy.array([float(n) for n in normal])
     
     def print_self(self):
         print("Point: ", self.point)
@@ -71,12 +75,15 @@ class Plane(Object):
     def translation(self, vector):
         self.point = [v1 + v2 for v1, v2 in zip(self.point, vector)]
 
+    def get_normal(self, p):
+        return normalize(self.normal)
+
 class Triangle(Object):
     def __init__(self, a, b, c, color, kd, ks, ka, kr, kt, phong):
         super().__init__(color, kd, ks, ka, kr, kt, phong)
-        self.a = numpy.array([int(x) for x in a])
-        self.b = numpy.array([int(x) for x in b])
-        self.c = numpy.array([int(x) for x in c])
+        self.a = numpy.array([float(x) for x in a])
+        self.b = numpy.array([float(x) for x in b])
+        self.c = numpy.array([float(x) for x in c])
     
     def print_self(self):
         print("A: ", self.a)
@@ -112,11 +119,9 @@ class Triangle(Object):
         self.a = [v1 + v2 for v1, v2 in zip(self.a, vector)]
         self.b = [v1 + v2 for v1, v2 in zip(self.b, vector)]
         self.c = [v1 + v2 for v1, v2 in zip(self.c, vector)]
-    # def get_normal(self, point):
-    #     return (self.b - self.a).cross(self.c - self.a).normalize()
-
-    # def get_material(self):
-    #     return self.material
+    
+    def get_normal(self, p):
+        return normalize(numpy.cross(self.b - self.a, self.c - self.a))
 
 class TriangleMesh(Object):
     def __init__(self, faces, vertices, color, kd, ks, ka, kr, kt, phong):
@@ -140,7 +145,7 @@ class TriangleMesh(Object):
 
     def intersect(self, ray_origin, ray_direction):
         intersect = []
-        for triangle in self.generateTriangles():
+        for triangle in self.generate_triangles():
             if triangle.intersect(ray_origin, ray_direction) != None:
                 intersect.append(triangle.intersect(ray_origin, ray_direction))
         
@@ -154,20 +159,14 @@ class TriangleMesh(Object):
         for i in range(len(self.vertices)):
             self.vertices[i] = [v1 + v2 for v1, v2 in zip(self.vertices[i], vector)]
 
-    # def get_normal(self, point):
-    #     return (self.b - self.a).cross(self.c - self.a).normalize()
-
-    # def get_material(self):
-    #     return self.material
-
 class Camera:
-    def __init__(self, h_res, v_res, distance, up, focus, target, field_of_view = 50):
+    def __init__(self, h_res, v_res, distance, up, focus, target, field_of_view = 90):
         self.h_res = int(h_res)
         self.v_res = int(v_res)
         self.distance = float(distance)
-        self.up = [float(u) for u in up]
-        self.focus = [float(f) for f in focus]
-        self.target = [float(t) for t in target]
+        self.up = numpy.array([float(u) for u in up])
+        self.focus = numpy.array([float(f) for f in focus])
+        self.target = numpy.array([float(t) for t in target])
         self.field_of_view = float(field_of_view)
 
     def print_self(self):
@@ -185,13 +184,13 @@ class Camera:
 
 class Light:
     def __init__(self, position, intensity):
-        self.position = [float(p) for p in position]
-        self.intensity = [float(i) for i in intensity]
+        self.position = numpy.array([float(p) for p in position])
+        self.intensity = numpy.array([float(i) for i in intensity])/255
 
     def translation(self, vector):
         self.position = [v1 + v2 for v1, v2 in zip(self.position, vector)]
 
 class AmbientLight:
     def __init__(self, intensity):
-        self.intensity = [float(i) for i in intensity]
+        self.intensity = numpy.array([float(i) for i in intensity])/255
 
