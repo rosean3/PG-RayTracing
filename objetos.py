@@ -1,30 +1,30 @@
-import math
 import numpy
-
+from math import pi
+import math
 class Object:
     def __init__(self, color, kd, ks, ka, kr, kt, phong):
-        self.color = color
-        self.kd = kd
-        self.ks = ks
-        self.ka = ka
-        self.kr = kr
-        self.kt = kt
-        self.phong = phong
+        self.color = [int(c) for c in color]
+        self.kd = float(kd)
+        self.ks = float(ks)
+        self.ka = float(ka)
+        self.kr = float(kr)
+        self.kt = float(kt)
+        self.phong = float(phong)
     
 
 
 class Sphere(Object):
     def __init__(self, center, radius, color, kd, ks, ka, kr, kt, phong):
         super().__init__(color, kd, ks, ka, kr, kt, phong)
-        self.center = center
-        self.radius = radius
+        self.center = [float(c) for c in center]
+        self.radius = float(radius)
     
     def print_self(self):
         print("Center: ", self.center)
         print("Radius: ", self.radius)
 
     def intersect(self, ray_origin, ray_direction):
-        I = self.center - ray_origin
+        I = [a - b for a, b in zip(self.center, ray_origin)]
         Tca = numpy.dot(I, ray_direction)
         D_sqrt = numpy.dot(I, I) - (Tca ** 2)
 
@@ -44,11 +44,15 @@ class Sphere(Object):
 
             return t0
 
+    def translation(self, vector):
+        self.center = [v1 + v2 for v1, v2  in zip(self.center, vector)]
+
+
 class Plane(Object):
     def __init__(self, point, normal, color, kd, ks, ka, kr, kt, phong):
         super().__init__(color, kd, ks, ka, kr, kt, phong)
-        self.point = point
-        self.normal = normal
+        self.point = [float(p) for p in point]
+        self.normal = [float(n) for n in normal]
     
     def print_self(self):
         print("Point: ", self.point)
@@ -57,12 +61,15 @@ class Plane(Object):
     def intersect(self, ray_origin, ray_direction):
         denom = numpy.dot(self.normal, ray_direction)
         if abs(denom) > 1e-6:
-            t = numpy.dot(self.normal, self.point - ray_origin)/ denom
+            t = numpy.dot(self.normal, [a - b for a,b in zip(self.point, ray_origin)])/ denom
             if t < 0:
                 return None
             if t >= 0:
                 return t
         return None
+
+    def translation(self, vector):
+        self.point = [v1 + v2 for v1, v2 in zip(self.point, vector)]
 
 class Triangle(Object):
     def __init__(self, a, b, c, color, kd, ks, ka, kr, kt, phong):
@@ -101,6 +108,10 @@ class Triangle(Object):
         else:
             return None
 
+    def translation(self, vector):
+        self.a = [v1 + v2 for v1, v2 in zip(self.a, vector)]
+        self.b = [v1 + v2 for v1, v2 in zip(self.b, vector)]
+        self.c = [v1 + v2 for v1, v2 in zip(self.c, vector)]
     # def get_normal(self, point):
     #     return (self.b - self.a).cross(self.c - self.a).normalize()
 
@@ -137,7 +148,11 @@ class TriangleMesh(Object):
             return None
         
         else:
-            return min(intersect), 
+            return min(intersect),
+
+    def translation(self, vector):
+        for i in range(len(self.vertices)):
+            self.vertices[i] = [v1 + v2 for v1, v2 in zip(self.vertices[i], vector)]
 
     # def get_normal(self, point):
     #     return (self.b - self.a).cross(self.c - self.a).normalize()
@@ -146,14 +161,14 @@ class TriangleMesh(Object):
     #     return self.material
 
 class Camera:
-    def __init__(self, h_res, v_res, distance, up, focus, target, field_of_view = 90):
-        self.h_res = h_res
-        self.v_res = v_res
-        self.distance = distance
-        self.up = up
-        self.focus = focus
-        self.target = target
-        self.field_of_view = field_of_view
+    def __init__(self, h_res, v_res, distance, up, focus, target, field_of_view = 50):
+        self.h_res = int(h_res)
+        self.v_res = int(v_res)
+        self.distance = float(distance)
+        self.up = [float(u) for u in up]
+        self.focus = [float(f) for f in focus]
+        self.target = [float(t) for t in target]
+        self.field_of_view = float(field_of_view)
 
     def print_self(self):
         print("V_res: ", self.v_res)
@@ -164,11 +179,19 @@ class Camera:
         print("Target: ", self.target)
         print("Field of View: ", self.field_of_view)
 
+    def rotate_y(self, degrees):
+        theta = math.radians(degrees)
+        self.focus = [self.focus[0]*math.cos(theta) - self.focus[2]*math.sin(theta), self.focus[1], self.focus[0]*math.sin(theta) + self.focus[2]*math.cos(theta)]
+
 class Light:
     def __init__(self, position, intensity):
-        self.position = position
-        self.intensity = intensity
+        self.position = [float(p) for p in position]
+        self.intensity = [float(i) for i in intensity]
+
+    def translation(self, vector):
+        self.position = [v1 + v2 for v1, v2 in zip(self.position, vector)]
 
 class AmbientLight:
     def __init__(self, intensity):
-        self.intensity = intensity
+        self.intensity = [float(i) for i in intensity]
+

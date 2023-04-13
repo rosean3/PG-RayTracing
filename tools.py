@@ -23,8 +23,8 @@ def getInput(file_location):
                 print("Erro na leitura do arquivo\nVerifique se o numero de parametros da esfera esta correto na linha ", linha)
                 return
             else:
-                center = numpy.array([int(x) for x in line[1:4]])
-                radius = int(line[4])
+                center = numpy.array([float(x) for x in line[1:4]])
+                radius = float(line[4])
                 objects['sphere'].append(
                     Sphere(center, radius, line[5:8], line[8], line[9], line[10], line[11], line[12], line[13]))
 
@@ -50,10 +50,10 @@ def getInput(file_location):
             else:
                 h_res = int(line[1])
                 v_res = int(line[2])
-                d = int(line[3])
-                up = numpy.array([int(x) for x in line[4:7]])
-                focus = numpy.array([int(x) for x in line[7:10]])
-                target = numpy.array([int(x) for x in line[10:13]])
+                d = float(line[3])
+                up = numpy.array([float(x) for x in line[4:7]])
+                focus = numpy.array([float(x) for x in line[7:10]])
+                target = numpy.array([float(x) for x in line[10:13]])
                 scene['camera'] = Camera(h_res, v_res, d, up, focus, target)
 
         #pega os dados da luz
@@ -66,7 +66,7 @@ def getInput(file_location):
                 return
 
             else:
-                position = numpy.array([int(x) for x in line[1:4]])
+                position = numpy.array([float(x) for x in line[1:4]])
                 scene['light'].append(Light(position, line[4:7]))
 
         #pega os dados do triangulo
