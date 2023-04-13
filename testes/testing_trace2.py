@@ -17,7 +17,8 @@ camera = scene['camera']
 ambient_light = scene['ambient']
 objects_list = []
 for obj in objects:
-    objects_list.extend(objects[obj])
+    if obj != 'triangle_mesh':
+        objects_list.extend(objects[obj])
 
 
 #translada um objeto
