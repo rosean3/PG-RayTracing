@@ -1,6 +1,6 @@
 from objetos import *
 from operacoes import *
-import numpy as np
+import numpy
 
 
 def trace(objects, ray_origin, ray_direction):
@@ -39,12 +39,12 @@ def shade(closest_obj, objects, p, v_vector, n_vector, ambient_light, lights, e=
         if len(intersections) != 0:
             t = intersections[0][0]
 
-        if len(intersections) == 0 or (np.dot(l_vector, light.position - new_P) < t):
-            if np.dot(n_vector, l_vector) > 0: # ! caso dê negativo
-                final_color += light.intensity * closest_obj.kd * closest_obj.color * (np.dot(n_vector, l_vector))
+        if len(intersections) == 0 or (numpy.dot(l_vector, light.position - new_P) < t):
+            if numpy.dot(n_vector, l_vector) > 0: # ! caso dê negativo
+                final_color += light.intensity * closest_obj.kd * closest_obj.color * (numpy.dot(n_vector, l_vector))
 
-            if np.dot(v_vector, r_vector) > 0: # ! caso dê negativo
-                final_color += light.intensity * closest_obj.ks * (np.dot(v_vector, r_vector) ** closest_obj.phong)
+            if numpy.dot(v_vector, r_vector) > 0: # ! caso dê negativo
+                final_color += light.intensity * closest_obj.ks * (numpy.dot(v_vector, r_vector) ** closest_obj.phong)
 
     return final_color
 
@@ -85,6 +85,6 @@ def trace_image(camera, ambient_light, lights, objects):
         for j in range(camera.h_res):
             Q[i, j] = Q[0, 0] + qx*j - qy*i
             ray_direction = normalize(Q[i, j] - camera.focus)
-            lighting = np.array(cast(objects, lights, camera.focus, ray_direction, ambient_light))
+            lighting = numpy.array(cast(objects, lights, camera.focus, ray_direction, ambient_light))
             img[i][j] = normalize_lighting(lighting) # ! since we're always adding in shade, there's a possibility the value is higher than 1
     return img
