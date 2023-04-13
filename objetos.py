@@ -1,6 +1,3 @@
-import numpy
-from math import pi
-import math
 from operacoes import *
 class Object:
     def __init__(self, color, kd, ks, ka, kr, kt, phong):
@@ -47,6 +44,12 @@ class Sphere(Object):
 
     def translation(self, vector):
         self.center = [v1 + v2 for v1, v2  in zip(self.center, vector)]
+
+    def rotate(self, x=0, y=0, z=0, point = (0,0,0)):
+        self.center = rotate_x(self.center, x, point)
+        self.center = rotate_y(self.center, y, point)
+        self.center = rotate_z(self.center, z, point)
+
     
     def get_normal(self, p):
         return normalize(p - self.center)
@@ -74,6 +77,14 @@ class Plane(Object):
 
     def translation(self, vector):
         self.point = [v1 + v2 for v1, v2 in zip(self.point, vector)]
+
+    def rotate(self, x=0, y=0, z=0, point = (0,0,0)):
+        self.point = rotate_x(x, point, self.point)
+        self.point = rotate_y(y, point, self.point)
+        self.point = rotate_z(z, point, self.point)
+        self.normal = rotate_x(x, point, self.normal)
+        self.normal = rotate_y(y, point, self.normal)
+        self.normal = rotate_z(z, point, self.normal)
 
     def get_normal(self, p):
         return normalize(self.normal)
@@ -159,6 +170,12 @@ class TriangleMesh(Object):
         for i in range(len(self.vertices)):
             self.vertices[i] = [v1 + v2 for v1, v2 in zip(self.vertices[i], vector)]
 
+    def rotate(self, x = 0, y = 0, z = 0, point = (0, 0, 0)):
+        for i in range(len(self.vertices)):
+            self.vertices[i] = rotate_x(self.vertices[i], x, point)
+            self.vertices[i] = rotate_y(self.vertices[i], y, point)
+            self.vertices[i] = rotate_z(self.vertices[i], z, point)
+
 class Camera:
     def __init__(self, h_res, v_res, distance, up, focus, target, field_of_view = 90):
         self.h_res = int(h_res)
@@ -178,9 +195,18 @@ class Camera:
         print("Target: ", self.target)
         print("Field of View: ", self.field_of_view)
 
-    def rotate_y(self, degrees):
-        theta = math.radians(degrees)
-        self.focus = [self.focus[0]*math.cos(theta) - self.focus[2]*math.sin(theta), self.focus[1], self.focus[0]*math.sin(theta) + self.focus[2]*math.cos(theta)]
+    def rotate(self,x = 0,y = 0 ,z = 0, point = (0,0,0)):
+        self.focus = rotate_x(x, point, self.focus)
+        self.focus = rotate_y(y, point, self.focus)
+        self.focus = rotate_z(z, point, self.focus)
+        self.target = rotate_x(x, point, self.target)
+        self.target = rotate_y(y, point, self.target)
+        self.target = rotate_z(z, point, self.target)
+
+
+
+    def translation(self, vector):
+        self.focus = [v1 + v2 for v1, v2 in zip(self.focus, vector)]
 
 class Light:
     def __init__(self, position, intensity):
