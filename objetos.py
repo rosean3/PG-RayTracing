@@ -205,6 +205,9 @@ class Camera:
         self.focus = rotate_x(x, point, self.focus)
         self.focus = rotate_y(y, point, self.focus)
         self.focus = rotate_z(z, point, self.focus)
+        self.target = rotate_x(x, point, self.target)
+        self.target = rotate_y(y, point, self.target)
+        self.target = rotate_z(z, point, self.target)
 
     def translation(self, vector):
         self.focus = [v1 + v2 for v1, v2 in zip(self.focus, vector)]
