@@ -78,11 +78,11 @@ def trace_image(camera, ambient_light, light, objects):
     qx = (hx/(camera.h_res - 1)) * b
     qy = (hy/(camera.v_res - 1)) * v
 
-    Q[0, 0] = [278.82,397.17,23.95]
+    Q[0, 0] = camera.focus - camera.distance * t - gx*b + gy*v
 
     for i in range(camera.v_res):
         for j in range(camera.h_res):
-            Q[i, j] = Q[0, 0] + 0.1*(j*b - i*v)
+            Q[i, j] = Q[0, 0] + qx*j - qy*i
             ray_direction = normalize(Q[i, j] - camera.focus)
             aux = np.array(cast(objects, camera.focus, ray_direction,ambient_light, light))
             aux = aux/max(*aux, 1)
