@@ -44,7 +44,7 @@ def shade(closest_obj, objects, p, v_vector, n_vector, ambient_light, lights, e=
 
 
 def cast(objects, lights, ray_origin, ray_direction, ambient_light):
-    color = ambient_light
+    color = ambient_light.intensity
     intersections = trace(objects, ray_origin, ray_direction)
     intersections.sort()
 
