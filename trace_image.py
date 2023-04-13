@@ -4,6 +4,9 @@ import numpy as np
 
 
 def trace(objects, ray_origin, ray_direction):
+    '''
+    Trace a ray in the scene to find the closest object
+    '''
     intersections = []
 
     for object in objects:
@@ -16,6 +19,9 @@ def trace(objects, ray_origin, ray_direction):
 
 
 def shade(closest_obj, objects, p, v_vector, n_vector, ambient_light, lights, e=10E-5):
+    '''
+    Shade an intersection point in the scene
+    '''
     final_color = closest_obj.ka * ambient_light.intensity
 
     if lights == None:
@@ -34,16 +40,19 @@ def shade(closest_obj, objects, p, v_vector, n_vector, ambient_light, lights, e=
             t = intersections[0][0]
 
         if len(intersections) == 0 or (np.dot(l_vector, light.position - new_P) < t):
-            if np.dot(n_vector, l_vector) > 0:
+            if np.dot(n_vector, l_vector) > 0: # ! caso dê negativo
                 final_color += light.intensity * closest_obj.kd * closest_obj.color * (np.dot(n_vector, l_vector))
 
-            if np.dot(v_vector, r_vector) > 0:
+            if np.dot(v_vector, r_vector) > 0: # ! caso dê negativo
                 final_color += light.intensity * closest_obj.ks * (np.dot(v_vector, r_vector) ** closest_obj.phong)
 
     return final_color
 
 
 def cast(objects, lights, ray_origin, ray_direction, ambient_light):
+    '''
+    Cast a ray in the scene
+    '''
     color = ambient_light.intensity
     intersections = trace(objects, ray_origin, ray_direction)
     intersections.sort()
