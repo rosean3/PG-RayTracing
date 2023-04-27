@@ -46,9 +46,9 @@ class Sphere(Object):
         self.center = [v1 + v2 for v1, v2  in zip(self.center, vector)]
 
     def rotate(self, x=0, y=0, z=0, point = (0,0,0)):
-        self.center = rotate_x(self.center, x, point)
-        self.center = rotate_y(self.center, y, point)
-        self.center = rotate_z(self.center, z, point)
+        self.center = rotate_x(x, point,self.center)
+        self.center = rotate_y(y, point, self.center)
+        self.center = rotate_z(z, point, self.center)
 
     
     def get_normal(self, p):
