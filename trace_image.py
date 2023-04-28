@@ -65,21 +65,25 @@ def cast(objects, lights, ray_origin, ray_direction, ambient_light,Ca, max_depth
         p = ray_origin + (ray_direction * intersections[0][0])
         n_vector = closest_obj.get_normal(p)
         v_vector = -1 * ray_direction
+
+        #pega Phong sem reflexão e refração
         color = shade(closest_obj, objects, p, v_vector, n_vector, ambient_light, lights)
 
         if max_depth>0:
-            reflection = reflect(v_vector, n_vector)
-            new_P = p + e * reflection
-            try:
-                if closest_obj.kt > 0:
-                    refraction = refract(closest_obj,p,v_vector,n_vector)
-                    new_P = p + e * refraction
-                    color += closest_obj.ky* cast(objects, lights, new_P, refraction, ambient_light, Ca, max_depth-1, e)
-                if closest_obj.kr > 0:
-                    color += closest_obj.ky* cast(objects, lights, new_P, reflection, ambient_light, Ca, max_depth-1, e)
 
-            except:
-                color += cast(objects, lights, new_P, reflection, ambient_light, Ca, max_depth-1, e)
+            #Adicionando reflexão
+            if closest_obj.kr > 0:
+                reflection = reflect(v_vector, n_vector)
+                new_P = p + e * reflection
+                color += closest_obj.kr * cast(objects, lights, new_P, reflection, ambient_light, Ca, max_depth - 1, e)
+
+            #Adicionando refração
+            if closest_obj.kt > 0:
+                refraction = refract(v_vector, n_vector)
+                if refraction is None:
+                    return color
+                new_P = p + e * refraction
+                color += closest_obj.kt* cast(objects, lights, new_P, refraction, ambient_light, Ca, max_depth-1, e)
 
     return color
 
@@ -109,19 +113,20 @@ def trace_image(camera, ambient_light, lights, objects):
 def reflect(l, n): return 2 * n * numpy.dot(l, n) - l
 
 
-def refract(obj, P, w, n):
-    cos = numpy.dot(n, w)
-    ior = obj.Nr
-    normal = n * 1
+def refract( L, N):
+    theta = numpy.dot(N, L)
+    indice_refracao = 1.1
 
-    if cos < 0:
-        normal *= -1
-        ior = 1 / ior
-        cos *= -1
+    #caso o raio esteja saindo do objeto
+    if theta < 0:
+        N *= -1
+        indice_refracao = 1 / indice_refracao
+        theta *= -1
 
-    delta = 1 - ((1 / (ior ** 2)) * (1 - cos ** 2))
+    delta = (1 - (indice_refracao ** 2) * (1 - theta ** 2))
+
     if delta < 0:
-        raise Exception("erro")
+        return None
 
-    aux = (numpy.sqrt(delta) - (1 / ior * cos)) * normal
-    return -1 / ior * w - aux
+    aux = indice_refracao * theta - numpy.sqrt(delta) * N - indice_refracao * L
+    return normalize(aux)

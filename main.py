@@ -19,10 +19,10 @@ for obj in objects:
 #if "sphere" in objects:
 #    objects['sphere'][0].translation((-4.31, -8.87, 7))
 
-objects['sphere'][1].rotate(0, 0, 180, (0, 0, 0))
-objects['sphere'][2].rotate(0, 0, 180, (0, 0, 0))
-objects['sphere'][3].rotate(0, 0, 180, (0, 0, 0))
-camera.rotate(20, 0, 0, (0, 0, 0))
+#objects['sphere'][1].rotate(0, 0, 180, (0, 0, 0))
+#objects['sphere'][2].rotate(0, 0, 180, (0, 0, 0))
+#objects['sphere'][3].rotate(0, 0, 180, (0, 0, 0))
+#camera.rotate(20, 0, 0, (0, 0, 0))
 
 
 if "light" in scene:
@@ -35,7 +35,7 @@ if "light" in scene:
     #camera.rotate(0, 90, -45, (0, 0, 0))
 
     # imagem rotacionada
-    image2 = trace_image(camera, ambient_light, scene['light'], objects_list)
+    #image2 = trace_image(camera, ambient_light, scene['light'], objects_list)
 
 
 
